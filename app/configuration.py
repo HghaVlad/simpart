@@ -5,7 +5,7 @@ class Config(object):
 	"""
 	DEBUG = False
 	TESTING = False
-	SQLALCHEMY_DATABASE_URI = 'sqlite:///application.db'
+	SQLALCHEMY_DATABASE_URI = 'mysql+pymysql://root:root@localhost/main'
 	BOOTSTRAP_FONTAWESOME = True
 	SECRET_KEY = "hello"
 	CSRF_ENABLED = True

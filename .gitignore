@@ -1,0 +1,5 @@
+/migrations
+/venv
+*.DS_STORE
+.idea/
+.gitignore
