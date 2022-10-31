@@ -1,7 +1,7 @@
 from flask import render_template, redirect, url_for, request, flash
 from app import app, db
 from app.models import User
-from flask_login import current_user, login_user
+from flask_login import current_user, login_user, login_required, logout_user
 
 
 @app.route('/')
@@ -30,20 +30,24 @@ def logining():
 	email = request.form['user_email']
 	password = request.form['user_password']
 	user = User.query.filter_by(email=email).first()
-	if user is None or user.check_password(password) is False:
-		flash("Invalid email or password")
-		return redirect(url_for('login_page'))
-	else:
-		print("well")
-		remember = request.form.get('user_check_remember')
-		if remember is None:
-			login_user(user)
-		else:
-			login_user(user, remember=True)
-		return "<b>Successful login</b>"
+	print(user.check_password(password))
+	if user is not None:
+		if user.check_password(password) is True:
+			print("well")
+			remember = request.form.get('user_check_remember')
+			if remember is None:
+				login_user(user)
+			else:
+				print(remember)
+				login_user(user, remember=True)
+			user.login_now()
+			db.session.commit()
+			return redirect(url_for("my_profile"))
+	flash("Invalid email or password")
+	return redirect(url_for('login_page'))
 
 
-@app.route("/logup")
+@app.route("/logup", methods=["GET", "POST"])
 def reg_page():
 	if current_user.is_authenticated:
 		return redirect(url_for("index"))
@@ -61,9 +65,49 @@ def regging():
 		if result == "YES":
 			db.session.add(new_user)
 			db.session.commit()
-			return "<b1>Successfully reg</b1>"
+			login_user(new_user)
+			new_user.login_now()
+			db.session.commit()
+			return redirect(url_for("my_profile"))
 		else:
-			flash("You have en error")
+			flash(result)
 	else:
 		flash("User with this email is exist")
-	return redirect(url_for('/logup'))
+	return redirect(url_for('reg_page'))
+
+
+@app.route("/profile")
+@login_required
+def my_profile():
+	return render_template("profile.html")
+
+
+@app.route("/edit_profile")
+@login_required
+def edit_profile():
+	return render_template("edit_profile.html")
+
+
+@app.route("/editing_profile", methods=["POST", "GET"])
+@login_required
+def editing_profile():
+	data = request.form
+	user = User.query.filter_by(id=current_user.id).first()
+	response = user.edit_profile(data)
+	print(response)
+	if response == "YES":
+		db.session.commit()
+		return redirect(url_for("my_profile"))
+	elif response == "PASS":
+		flash("You have an error in your password")
+		return redirect(url_for("edit_profile"))
+	else:
+		flash("You have an error in completing form")
+		return redirect(url_for("edit_profile"))
+
+
+@app.route("/logout")
+@login_required
+def logout():
+	logout_user()
+	return redirect(url_for("index"))

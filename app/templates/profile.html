@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+    <meta name="description" content="Simple article site"/>
+    <meta name="author" content="Vlad Bukharin" />
+{#    <link rel="icon" type="image/x-icon" href="img/favicon.ico" />#}
+        <link href="https://netdna.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet">
+    <script src="https://use.fontawesome.com/releases/v6.1.0/js/all.js" crossorigin="anonymous"></script>
+    <link href="https://fonts.googleapis.com/css?family=Lora:400,700,400italic,700italic" rel="stylesheet" type="text/css" />
+    <link href="{{ url_for('static', filename='css/styles.css') }}" rel="stylesheet" />
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/profile.css') }}">
+    <title>My profile - </title>
+</head>
+<style>
+        .nav-link{
+            font-size: small !important;
+        }
+        .navbar-brand{
+            font-size: large !important;
+        }
+    </style>
+<body>
+    <nav class="navbar navbar-expand-lg navbar-light bg-primary" id="mainNav">
+       <div class="container px-4 px-lg-5">
+            <a class="navbar-brand pt-4" href="/">SimpArt</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarResponsive" aria-controls="navbarResponsive" aria-expanded="false" aria-label="Toggle navigation">
+                Menu
+                <i class="fas fa-bars"></i>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarResponsive">
+                <ul class="navbar-nav ms-auto py-4 py-lg-0">
+                    <li class="nav-item"><a class="nav-link px-lg-3 py-3 py-lg-4" href="/">Home</a></li>
+                    <li class="nav-item"><a class="nav-link px-lg-3 py-3 py-lg-4" href="/about">About</a></li>
+                    {% if current_user.is_authenticated %}
+                    <li class="nav-item"><a class="nav-link px-lg-3 py-3 py-lg-4" href="/profile">My profile</a></li>
+                    {% else %}
+                    <li class="nav-item"><a class="nav-link px-lg-3 py-3 py-lg-4" href="/login ">Log in</a></li>
+                   {% endif %}
+                </ul>
+            </div>
+        </div>
+    </nav>
+<br>
+
+<div class="container bootdey mt-5">
+<div class="col-md-12 mt-5">
+    <div class="col-md-4">
+        <div class="portlet light profile-sidebar-portlet bordered">
+            <div class="profile-userpic">
+                <img src="{{ url_for('static', filename='img/avatar1.png') }}" class="img-responsive" alt=""> </div>
+            <div class="profile-usertitle">
+                <div class="profile-usertitle-name"> {{ current_user.name }} </div>
+                <div class="profile-usertitle-job"> {{ current_user.email }} </div>
+            </div>
+            <div class="profile-userbuttons">
+                <button onclick="{document.location.href='/edit_profile'}" type="button" class="btn btn-info  btn-sm">Edit profile</button>
+                 <button onclick="{document.location.href='/logout'}" type="button" class="btn btn-info  btn-sm">Log out</button>
+            </div>
+            <div class="profile-usermenu">
+                <ul class="nav">
+                    <li class="active">
+                        <a><i class="icon-home"></i> My articles </a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-8">
+        <div class="portlet light bordered">
+            <div class="portlet-title tabbable-line">
+                <div class="caption caption-md">
+                    <i class="icon-globe theme-font hide"></i>
+                    <span class="caption-subject font-blue-madison bold uppercase">Articles List</span>
+                </div>
+            </div>
+            <div class="portlet-body">
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>#</th>
+                            <th>Article</th>
+                            <th>Description</th>
+                            <th>Views</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <th scope="row">1</th>
+                            <td><a  href="link" >Hello name too mang</a></td>
+                            <td>Column content Column content Column content Column content</td>
+                            <td>1200</td>
+                        </tr>
+                        <tr >
+                            <th scope="row">2</th>
+                            <td>Hello name too mang</td>
+                            <td>Column content Column content Column content Column content</td>
+                            <td>1200</td>
+                        </tr>
+
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+</div>
+</body>
+</html>
