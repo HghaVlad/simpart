@@ -1,13 +1,20 @@
-from flask import render_template, redirect, url_for, request, flash
+from flask import render_template, redirect, url_for, request, flash, session
 from app import app, db
-from app.models import User
+from app.models import User, Post
 from flask_login import current_user, login_user, login_required, logout_user
+
+
+@app.errorhandler(404)
+def page_not_found(e):
+	print(e)
+	return render_template('404.html'), 404
 
 
 @app.route('/')
 @app.route("/index")
 def index():
-	return render_template("index.html")
+	posts = Post.query.order_by(Post.published_date.desc()).limit(10)
+	return render_template("index.html", posts=posts)
 
 
 @app.route("/about")
@@ -79,7 +86,8 @@ def regging():
 @app.route("/profile")
 @login_required
 def my_profile():
-	return render_template("profile.html")
+	posts = Post.query.filter_by(author_id=current_user.id).all()
+	return render_template("profile.html", posts=posts)
 
 
 @app.route("/edit_profile")
@@ -111,3 +119,54 @@ def editing_profile():
 def logout():
 	logout_user()
 	return redirect(url_for("index"))
+
+
+@app.route("/form")
+def form_page():
+	return render_template("write_article.html")
+
+
+@app.route("/get_form", methods=["POST"])
+def get_form():
+	data = request.form
+	session['article_title'] = data['Title']
+	session['article_desc'] = data['Description']
+	session['article_text'] = data['Text']
+	context = {
+		'article_title': data['Title'],
+		'article_description': data['Description'],
+		'article_text': data['Text'],
+		'article_author': current_user.name
+		}
+
+	return render_template("pre_article.html", **context)
+
+
+@app.route("/post_form", methods=["POST"])
+def post_article():
+	data = request.form.get("publish")
+	if data is not None:
+		if data == 'YES':
+			new_post = Post()
+			new_post.publish(session['article_title'], session['article_desc'], session['article_text'], current_user)
+			db.session.add(new_post)
+			db.session.commit()
+	return redirect(url_for("my_profile"))
+
+
+@app.route("/see_article")
+def see_article():
+	article_id = request.args.get("id")
+	if article_id is not None:
+		article = Post.query.filter_by(id=article_id).first()
+		article.new_visitor()
+		if article is not None:
+			context = {
+				'article_title': article.title,
+				'article_description': article.description,
+				'article_author': article.author.name,
+				'article_date': article.published_date.date(),
+				'article_text': article.content
+			}
+			return render_template("see_article.html", **context)
+	return render_template("404.html"), 404

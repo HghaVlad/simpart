@@ -28,14 +28,14 @@
                     <!-- Post preview-->
                     {% for post in posts %}
                     <div class="post-preview">
-                        <a href="post.html">
-                            <h2 class="post-title">{{ post_name }}</h2>
-                            <h3 class="post-subtitle">{{  post_description }}</h3>
+                        <a href="/see_article?id={{ post.id }}">
+                            <h2 class="post-title">{{ post.title }}</h2>
+                            <h3 class="post-subtitle">{{  post.description }}</h3>
                         </a>
                         <p class="post-meta">
                             Posted by
-                            <a >{{  post_author }}</a>
-                            on {{ post_pub_date }}
+                            <a >{{  post.author.name }}</a>
+                            on {{ post.published_date.date() }}
                         </p>
                     </div>
                     <!-- Divider-->

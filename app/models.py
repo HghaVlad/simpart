@@ -8,13 +8,24 @@ class Post(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     author_id = db.Column(db.Integer, db.ForeignKey("user.id"))
     author = db.relationship("User", backref="posts", lazy=True)
-    title = db.Column(db.String(50))
-    description = db.Column(db.String(200))
+    title = db.Column(db.String(200))
+    description = db.Column(db.String(400))
     content = db.Column(db.Text)
-    cover = db.Column(db.Text)
+    cover = db.Column(db.Text, nullable=True)
     views = db.Column(db.Integer, default=0)
     published_date = db.Column(db.DateTime)
 
+    def publish(self, title, descr, text, user):
+        self.title = title
+        self.description = descr
+        self.content = text
+        self.author = user
+        self.author_id = user.id
+        self.published_date = datetime.now()
+
+    def new_visitor(self):
+        self.views = self.views + 1
+        db.session.commit()
 
 @lm.user_loader
 def load_user(user_id):

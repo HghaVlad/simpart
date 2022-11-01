@@ -64,6 +64,11 @@
                         <a><i class="icon-home"></i> My articles </a>
                     </li>
                 </ul>
+                <ul class="nav">
+                    <li class="">
+                        <a href="/form"><i class="icon-home"></i> New article </a>
+                    </li>
+                </ul>
             </div>
         </div>
     </div>
@@ -86,19 +91,14 @@
                         </tr>
                     </thead>
                     <tbody>
+                        {% for post in posts  %}
                         <tr>
                             <th scope="row">1</th>
-                            <td><a  href="link" >Hello name too mang</a></td>
-                            <td>Column content Column content Column content Column content</td>
-                            <td>1200</td>
+                            <td><a  href="/see_article?id={{ post.id }}" >{{ post.title }}</a></td>
+                            <td>{{ post.description }}</td>
+                            <td>{{ post.views }}</td>
                         </tr>
-                        <tr >
-                            <th scope="row">2</th>
-                            <td>Hello name too mang</td>
-                            <td>Column content Column content Column content Column content</td>
-                            <td>1200</td>
-                        </tr>
-
+                        {% endfor %}
                     </tbody>
                 </table>
             </div>
